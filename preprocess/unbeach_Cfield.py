@@ -9,22 +9,18 @@ Created on December 1 2018
 Function creating the unbeach velocity for the NEMO data (C-grid)
 """
 
-
 import xarray as xr
 import numpy as np
 
+data_dir = '/Users/benji/STAS PROJECT/Barrents-Run_parcelsV2.0/Data/ORCA0083-N006/'
 
-res = '0083'
-data_dir = '/projects/0/topios/hydrodynamic_data/NEMO-MEDUSA/ORCA%s-N006/' % res
-
-day = '05' if res == '0083' else '04'
-datasetM = xr.open_dataset(data_dir + 'domain/coordinates.nc', decode_cf=False)
-datasetU = xr.open_dataset(data_dir + 'means/ORCA%s-N06_200001%sd05U.nc' % (res, day), decode_cf=False)
-datasetV = xr.open_dataset(data_dir + 'means/ORCA%s-N06_200001%sd05V.nc' % (res, day), decode_cf=False)
+datasetM = xr.open_dataset(data_dir + 'domain/mesh_hgr.nc', decode_cf=False)
+datasetU = xr.open_dataset(data_dir + 'ORCA0083-N06_20110105d05U.nc', decode_cf=False)
+datasetV = xr.open_dataset(data_dir + 'ORCA0083-N06_20110105d05V.nc', decode_cf=False)
 
 dataArrayLonF = datasetM.glamf
 dataArrayLatF = datasetM.gphif
-dataArrayTime = datasetM.time
+dataArrayTime = datasetM.t
 dataArrayTime.attrs['time_origin'] = '1950-JAN-01 00:00:00'
 dataArrayTime.attrs['units'] = 'seconds since 1950-01-01 00:00:00'
 
@@ -65,4 +61,7 @@ dataset[dataArrayLatF.name] = dataArrayLatF
 dataset[dataArrayTime.name] = dataArrayTime
 dataset[dataArrayUnBeachU.name] = dataArrayUnBeachU
 dataset[dataArrayUnBeachV.name] = dataArrayUnBeachV
-dataset.to_netcdf(path='ORCA%s-N06_unbeaching_vel.nc' % res, engine='scipy')
+dataset.to_netcdf(path='ORCA0083-N06_unbeaching_vel.nc', engine='scipy')
+
+
+
