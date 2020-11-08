@@ -8,10 +8,10 @@ from barents_mp_kernels import *
 from datetime import timedelta, datetime
 
 def get_nemo_fieldset(run3D=False):
-    data_dir = 'D:/Barents_Run_Data/ORCA0083-N006/'
+    data_dir = '/Volumes/Barents/OceanParcels/Data/ORCA0083/'
     ufiles = sorted(glob(data_dir+'ORCA0083-N06_20??????d05U.nc'))
     vfiles = sorted(glob(data_dir+'ORCA0083-N06_20??????d05V.nc'))
-    mesh_mask = data_dir + 'domain/mesh_hgr.nc'
+    mesh_mask = data_dir + 'mesh_hgr.nc'
 
     if run3D:
         wfiles = sorted(glob(data_dir+'ORCA0083-N06_200?????d05W.nc'))
@@ -33,7 +33,7 @@ def get_nemo_fieldset(run3D=False):
         dimensions = {'U': {'lon': 'glamf', 'lat': 'gphif', 'time': 'time_counter'},
                       'V': {'lon': 'glamf', 'lat': 'gphif', 'time': 'time_counter'}}
 
-    fieldset = FieldSet.from_nemo(filenames, variables, dimensions)
+    fieldset = FieldSet.from_nemo(filenames, variables, dimensions, allow_time_extrapolation = True)
     if run3D:
         def compute(fieldset):
             fieldset.W.data[:, 0, :, :] = 0.
@@ -43,7 +43,7 @@ def get_nemo_fieldset(run3D=False):
     return fieldset
 
 def set_unbeaching(fieldset):
-    files = '/Users/benji/STAS PROJECT/Barrents-Run_parcelsV2.0/Data/ORCA0083-N006/ORCA0083-N06_unbeaching_vel.nc'
+    files = '/Users/fionarussell/STAS_PROJECT/Barents/ORCA0083-N06_unbeaching_vel.nc'
     filenames = files
     variables = {'Unemo_unbeach': 'unBeachU',
                  'Vnemo_unbeach': 'unBeachV'}
@@ -123,7 +123,7 @@ def run_barents_mp(outfile, run3D=False):
     pfile.write(pset, pset[0].time)
 
     tic = timelib.time()
-    ndays = 22
+    ndays = 90
     
     pset.show(savefile='before')
     
@@ -133,4 +133,4 @@ def run_barents_mp(outfile, run3D=False):
         pset.execute(kernel, runtime=delta(days=2), dt=900, verbose_progress=False, recovery={ErrorCode.ErrorOutOfBounds: DeleteParticle})
         pfile.write(pset, pset[0].time)    
     
-    pset.show(savefile='after')
+    pset.show(savefile='after_90j')
