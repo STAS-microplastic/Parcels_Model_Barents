@@ -11,7 +11,7 @@ def get_nemo_fieldset(run3D=False):
     data_dir = '/Volumes/Barents/OceanParcels/Data/ORCA0083/'
     ufiles = sorted(glob(data_dir+'ORCA0083-N06_20??????d05U.nc'))
     vfiles = sorted(glob(data_dir+'ORCA0083-N06_20??????d05V.nc'))
-    mesh_mask = data_dir + 'mesh_hgr.nc'
+    mesh_mask = data_dir + 'domain/mesh_hgr.nc'
 
     if run3D:
         wfiles = sorted(glob(data_dir+'ORCA0083-N06_200?????d05W.nc'))
@@ -43,7 +43,7 @@ def get_nemo_fieldset(run3D=False):
     return fieldset
 
 def set_unbeaching(fieldset):
-    files = '/Users/fionarussell/STAS_PROJECT/Barents/ORCA0083-N06_unbeaching_vel.nc'
+    files = '/Users/benji/STAS PROJECT/Test_code/ORCA025-N006_data/ORCA%s-N06_unbeaching_vel.nc'
     filenames = files
     variables = {'Unemo_unbeach': 'unBeachU',
                  'Vnemo_unbeach': 'unBeachV'}
