@@ -95,6 +95,7 @@ def get_particle_set(fieldset, run3D=False):
 
     # gather all particles, released every day for one year
     times = np.arange(np.datetime64('2011-01-05'), np.datetime64('2011-01-06'))
+    # repeat release at the same location for every 80 days
     repeatdt=delta(days=80)
 
     if run3D:
@@ -107,7 +108,7 @@ def get_particle_set(fieldset, run3D=False):
         return ParticleSet.from_list(fieldset, PlasticParticle,
                                      lon=np.tile(lons, [len(times)]),
                                      lat=np.tile(lats, [len(times)]),
-                                     repeatdt=repeatdt)
+                                     repeatdt=repeatdt) # addition of the repeat argument
                                      
 
 def run_barents_mp(outfile, run3D=False):
