@@ -1,0 +1,4 @@
+utils.c:1:0: warning: -fPIC ignored for target (all code is position independent)
+ /*
+ ^
+Compiling: gcc -Wall -fPIC -IC:\Users\benji\STAS PROJECT\Barents-Run_parcelsV2.0\postprocess\include -g -O3 -m64 -o utils.so utils.c -shared -m64
