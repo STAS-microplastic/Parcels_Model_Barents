@@ -37,7 +37,7 @@ def draw(filename, part_3d=False):
 
     p.origin = np.where(p.lon[:, 0] > 2, 0, 1)
 
-    pind = np.logical_and(p.age > 0*365, p.age <= 3*365)
+    pind = np.logical_and(p.age > 0*365, p.age <= 4*365)
     p.keepParticles(pind, 'time')
 
     glon = np.arange(-120, 120, 1)
@@ -57,8 +57,8 @@ def draw(filename, part_3d=False):
     pind = np.logical_and(p.age > 0*365, p.age <= 2*365)
     p.keepParticles(pind, 'time')
     pxi, pyi = utils.locate(p.lon, p.lat, glon, glat)
-    map_density_3rd_year = utils.histogram(pxi, pyi, (len(glat), len(glon)))
-    map_density_3rd_year = map_density_3rd_year.astype(np.float32) / cellSizeField.data[0, :]
+    map_density_4th_year = utils.histogram(pxi, pyi, (len(glat), len(glon)))
+    map_density_4th_year = map_density_4th_year.astype(np.float32) / cellSizeField.data[0, :]
 
     def plot(data, title, cmap_name='plasma_r', log=False, vmin=None, vmax=None, under=None, over=None, show=True, fname=''):
 
@@ -68,13 +68,13 @@ def draw(filename, part_3d=False):
             fig = plt.figure(figsize=(14, 8.5), dpi=60, facecolor='w', edgecolor='k')
         ax = fig.add_axes([.05, .05, .9, .9])
 
-        m = Basemap(width=5e6, height=3e6,
+        m = Basemap(width=3.4e6, height=2.5e6,
                     resolution='l', projection='stere',
                     lat_ts=70, lat_0=75, lon_0=40.)
 
         m.drawcoastlines(zorder=3)
-        m.drawparallels(np.arange(-90, 91, 10), labels=[True, False, False, False], fontsize=15, zorder=3)
-        m.drawmeridians(np.arange(-180, 181, 30), labels=[False, False, False, True], fontsize=15, zorder=3)
+        m.drawparallels(np.arange(-90, 91, 2), labels=[True, False, False, False], fontsize=15, zorder=3)
+        m.drawmeridians(np.arange(-180, 181, 10), labels=[False, False, False, True], fontsize=15, zorder=3)
         m.fillcontinents(color='blanchedalmond')
 
         legend_text = title
@@ -185,8 +185,8 @@ def draw(filename, part_3d=False):
     # plot(map_mean_age, title, cmap_name='plasma_r', log=False, vmin=0, vmax=365, show=False, fname=basename+'_mean_age_short.png')
 
     title = '# Part / km$^2$'
-    plot(map_density_3rd_year, title, cmap_name='hot_r', log=True, vmin=1e-10, vmax=1e-5, under='white', over='blue', show=False, fname=basename+'_3rd_yr_density_log.png')
-    plot(map_density_3rd_year, title, cmap_name='hot_r', log=False, vmin=1e-7, vmax=1e-5, under='white', over='blue', show=False, fname=basename+'_3rd_yr_density_lin.png')
+    plot(map_density_4th_year, title, cmap_name='hot_r', log=True, vmin=1e-10, vmax=1e-5, under='white', over='blue', show=False, fname=basename+'_4th_yr_density_log.png')
+    plot(map_density_4th_year, title, cmap_name='hot_r', log=False, vmin=1e-7, vmax=1e-5, under='white', over='blue', show=False, fname=basename+'_4th_yr_density_lin.png')
 
     title = '%'
     plot(map_touched, title, cmap_name='Spectral_r', log=True, vmin=.1, vmax=100, under='white', show=False, fname=basename+'_touched_log.png')
