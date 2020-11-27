@@ -87,8 +87,8 @@ def get_particle_set(fieldset, run3D=False):
 
     # gather all particles, released every day for one year
     times = np.arange(np.datetime64('2011-01-05'), np.datetime64('2011-01-06'))
-    # repeat release at the same location for every 2 days
-    repeatdt=delta(days=15)
+    # repeat release at the same location for every 2 days (1'800 particles par mois)
+    repeatdt=delta(days=2)
 
     if run3D:
         return ParticleSet.from_list(fieldset, PlasticParticle,
@@ -118,14 +118,14 @@ def run_barents_sea_mp(outfile, run3D=False):
     pfile.write(pset, pset[0].time)
 
     tic = timelib.time()
-    ndays = 3*360
+    ndays = 4*365
     
     for d in range(int(ndays/2)):
         day = 2 * d
         print('running %d / %d [time %g s]: %d particles ' % (day, ndays, timelib.time()-tic, len(pset)))
         pset.execute(kernel, runtime=delta(days=2), dt=900, verbose_progress=False, recovery={ErrorCode.ErrorOutOfBounds: DeleteParticle})
         pfile.write(pset, pset[0].time)
-        if day > 548: #after 30 days no more particle release
+        if day > 3*365: #after 3 years no more particle release => lose a lot of particles in 1 year already
             pset.repeatdt= None
     
-    pset.show(savefile='after_Barents_release_3y')
+    pset.show(savefile='after_Barents_release_2y_2011_2012')
