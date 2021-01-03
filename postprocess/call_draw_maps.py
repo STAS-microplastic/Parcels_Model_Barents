@@ -2,9 +2,9 @@
 # -*- coding: utf-8 -*-
 
 """
-Created on December 1 2018
+Created on November 2020
 
-@author: Philippe Delandmeter
+@author: Philippe Delandmeter (Reviewed by Benjamin Heutte)
 
 Master postprocessing file
 """
@@ -13,11 +13,6 @@ Master postprocessing file
 from draw_maps import draw
 
 
-path = '../ncfiles/'
+path = 'D:/Barents_Run_Data/Output_ncfiles/'
 
-draw(path+'nemo0083.nc')
-draw(path+'nemo025.nc')
-draw(path+'nemo0083_cmems.nc')
-draw(path+'nemo0083_stokes.nc')
-draw(path+'nemo0083_diff.nc')
-draw(path+'nemo0083_3D.nc', part_3d=True)
+draw(path+'nemo0083_Norwegian_release_4y.nc')
