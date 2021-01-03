@@ -4,7 +4,7 @@
 """
 Created on December 1 2018
 
-@author: Philippe Delandmeter
+@author: Philippe Delandmeter (Modified by Benjamin Heutte, December 2020)
 
 Postprocessing class and useful functions
 """
@@ -110,7 +110,7 @@ class Utils(object):
         cfunc = self.lib.histogram
         for tab in [pxi, pyi, hist]:
             if not tab.flags.c_contiguous:
-                print 'error'
+                print('error')
                 exit(-1)
 
         cfunc(pxi.ctypes.data_as(POINTER(POINTER(c_int))),
@@ -128,7 +128,7 @@ class Utils(object):
         cfunc = self.lib.cumulative_age
         for tab in [pxi, pyi, page, age]:
             if not tab.flags.c_contiguous:
-                print 'error'
+                print('error')
                 exit(-1)
 
         cfunc(pxi.ctypes.data_as(POINTER(POINTER(c_int))),
@@ -152,7 +152,7 @@ class Utils(object):
         cfunc = self.lib.cumulative_depth_lim
         for tab in [pxi, pyi, pdepth, depth_count]:
             if not tab.flags.c_contiguous:
-                print 'error'
+                print('error')
                 exit(-1)
 
         cfunc.argtypes = [POINTER(POINTER(c_int)),
@@ -196,7 +196,7 @@ class Utils(object):
         cfunc = self.lib.zone_concentration
         for tab in [pxi, pyi, page_int, zones]:
             if not tab.flags.c_contiguous:
-                print 'error'
+                print('error')
                 exit(-1)
 
         cfunc(pxi.ctypes.data_as(POINTER(POINTER(c_int))),
