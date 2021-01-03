@@ -4,10 +4,9 @@
 """
 Created on December 1 2018
 
-@author: Philippe Delandmeter
+@author: Philippe Delandmeter (Modified by Benjamin Heutte, December 2020)
 
-Function postprocessing floating MP particles released
-in Thames and Rhiver estuaries
+Function postprocessing floating MP particles
 """
 
 
@@ -37,9 +36,8 @@ def draw(filename, part_3d=False):
 
     p.origin = np.where(p.lon[:, 0] > 2, 0, 1)
 
-    pind = np.logical_and(p.age > 0*365, p.age <= 3*365)
+    pind = np.logical_and(p.age > 0*365, p.age <= 4*365)
     p.keepParticles(pind, 'time')
-    assert abs(np.max(p.age)-3*365) < 10
 
     glon = np.arange(-120, 120, 1)
     glat = np.arange(35, 90, .5)
@@ -52,41 +50,16 @@ def draw(filename, part_3d=False):
     # map_mean_age = utils.mean_age(pxi, pyi, p.age, (len(glat), len(glon)), map_count)
     map_touched = utils.touched(pxi, pyi, (len(glat), len(glon)))
 
-    if part_3d:
-        gdepth = np.arange(0, 2000, 5)
-        # map_count = utils.histogram(pxi, pyi, (len(glat), len(glon)))
-        # map_depth_0 = utils.depth_fraction(pxi, pyi, p.depth, 0, (len(glat), len(glon)), map_count)
-        # map_depth_05 = utils.depth_fraction(pxi, pyi, p.depth, 0.5, (len(glat), len(glon)), map_count)
-        # map_depth_1 = utils.depth_fraction(pxi, pyi, p.depth, 1, (len(glat), len(glon)), map_count)
-        # map_depth_10 = utils.depth_fraction(pxi, pyi, p.depth, 10, (len(glat), len(glon)), map_count)
-        # map_depth_50 = utils.depth_fraction(pxi, pyi, p.depth, 50, (len(glat), len(glon)), map_count)
-        pzi = utils.locate_depth(p.depth, gdepth)
-
-        lat_edges = range(np.min(pyi), np.max(pyi))
-        depth_edges = range(np.max(pzi))
-        dens, lat_edges, depth_edges = np.histogram2d(pyi.flatten(), pzi.flatten(), bins=(lat_edges, depth_edges))
-        dens = dens.T
-        dens_lat, dens_depth = np.meshgrid(glat[lat_edges], gdepth[depth_edges])
-
-    glon_f = np.arange(-120, 120, 1/4.)
-    glat_f = np.arange(35, 90, .5/4.)
-    glon_fm, glat_fm = np.meshgrid(glon_f, glat_f)
-    zones = NWcontinental_shelf_zones(glon_fm, glat_fm)
-    pxi_f, pyi_f = utils.locate(p.lon, p.lat, glon_f, glat_f)
-    zone_concentration = utils.zone_concentration(zones, p.age, 2,  pxi_f, pyi_f)
-    np.save('%s_zone_concentration' % basename, zone_concentration)
-
     grid = RectilinearZGrid(glon, glat, mesh='spherical')
     cellSizeField = Field('cellsize', np.zeros((len(glat), len(glon))), grid=grid)
     cellSizeField.data[0, :] = cellSizeField.cell_areas()
-    pind = np.logical_and(p.age > 2*365, p.age <= 3*365)
+    pind = np.logical_and(p.age > 3*365, p.age <= 4*365)
     p.keepParticles(pind, 'time')
     pxi, pyi = utils.locate(p.lon, p.lat, glon, glat)
-    map_density_3rd_year = utils.histogram(pxi, pyi, (len(glat), len(glon)))
-    map_density_3rd_year = map_density_3rd_year.astype(np.float32) / cellSizeField.data[0, :]
+    map_density = utils.histogram(pxi, pyi, (len(glat), len(glon)))
+    map_density = map_density.astype(np.float32) / cellSizeField.data[0, :]
 
     def plot(data, title, cmap_name='plasma_r', log=False, vmin=None, vmax=None, under=None, over=None, show=True, fname=''):
-        print '\n\n PLOTTING %s \ninto %s' % (title, fname)
 
         if fname:
             fig = plt.figure(figsize=(14, 8.5), dpi=150, facecolor='w', edgecolor='k')
@@ -94,13 +67,13 @@ def draw(filename, part_3d=False):
             fig = plt.figure(figsize=(14, 8.5), dpi=60, facecolor='w', edgecolor='k')
         ax = fig.add_axes([.05, .05, .9, .9])
 
-        m = Basemap(width=8e6, height=5e6,
+        m = Basemap(width=3.4e6, height=2.5e6,
                     resolution='l', projection='stere',
-                    lat_ts=70, lat_0=70, lon_0=5.)
+                    lat_ts=70, lat_0=75, lon_0=30.)
 
         m.drawcoastlines(zorder=3)
-        m.drawparallels(np.arange(-90, 91, 10), labels=[True, False, False, False], fontsize=15, zorder=3)
-        m.drawmeridians(np.arange(-180, 181, 30), labels=[False, False, False, True], fontsize=15, zorder=3)
+        m.drawparallels(np.arange(-90, 91, 2), labels=[True, False, False, False], fontsize=15, zorder=3)
+        m.drawmeridians(np.arange(-180, 181, 10), labels=[False, False, False, True], fontsize=15, zorder=3)
         m.fillcontinents(color='blanchedalmond')
 
         legend_text = title
@@ -134,7 +107,7 @@ def draw(filename, part_3d=False):
             vmax = np.max(data)
         if under == 'white':
             data = np.ma.masked_where(data < vmin+1e-15, data)
-        print 'min/max: ', np.min(data), np.max(data)
+        print('min/max: %f %f' %( np.min(data), np.max(data)))
 
         if log:
             m.pcolormesh(xs, ys, data, cmap=cmap, norm=colors.LogNorm(vmin=vmin, vmax=vmax), zorder=2)
@@ -211,12 +184,12 @@ def draw(filename, part_3d=False):
     # plot(map_mean_age, title, cmap_name='plasma_r', log=False, vmin=0, vmax=365, show=False, fname=basename+'_mean_age_short.png')
 
     title = '# Part / km$^2$'
-    plot(map_density_3rd_year, title, cmap_name='hot_r', log=True, vmin=1e-10, vmax=1e-5, under='white', over='blue', show=False, fname=basename+'_3rd_yr_density.png')
-    plot(map_density_3rd_year, title, cmap_name='hot_r', log=False, vmin=1e-7, vmax=1e-5, under='white', over='blue', show=False, fname=basename+'_3rd_yr_density_lin.png')
+    plot(map_density, title, cmap_name='hot_r', log=True, vmin=1e-8, vmax=1e-4, under='white', over='blue', show=False, fname=basename+'_log.png')
+    plot(map_density, title, cmap_name='hot_r', log=False, vmin=1e-7, vmax=1e-6, under='white', over='blue', show=False, fname=basename+'_lin.png')
 
     title = '%'
-    plot(map_touched, title, cmap_name='Spectral_r', log=True, vmin=.1, vmax=100, under='white', show=False, fname=basename+'_touched_log.png')
-    plot(map_touched, title, cmap_name='Spectral_r', log=False, vmin=.1, vmax=100, under='white', show=False, fname=basename+'_touched_lin.png')
+    plot(map_touched, title, cmap_name='Spectral_r', log=True, vmin=.01, vmax=100, under='white', show=False, fname=basename+'_touched_log.png')
+    plot(map_touched, title, cmap_name='Spectral_r', log=False, vmin=.01, vmax=100, under='white', show=False, fname=basename+'_touched_lin.png')
 
     if part_3d:
         plot_vertProfile(dens, dens_lat, dens_depth, show=False, fname=basename+'_vertProfile.png')
