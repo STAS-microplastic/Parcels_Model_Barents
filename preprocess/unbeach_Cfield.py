@@ -4,7 +4,7 @@
 """
 Created on December 1 2018
 
-@author: Philippe Delandmeter
+@author: Philippe Delandmeter (Modified by Benjamin Heutte, December 2020)
 
 Function creating the unbeach velocity for the NEMO data (C-grid)
 """
@@ -13,14 +13,11 @@ Function creating the unbeach velocity for the NEMO data (C-grid)
 import xarray as xr
 import numpy as np
 
+data_dir = 'D:/Barents_Run_Data/ORCA0083-N006/' % res
 
-res = '0083'
-data_dir = '/projects/0/topios/hydrodynamic_data/NEMO-MEDUSA/ORCA%s-N006/' % res
-
-day = '05' if res == '0083' else '04'
-datasetM = xr.open_dataset(data_dir + 'domain/coordinates.nc', decode_cf=False)
-datasetU = xr.open_dataset(data_dir + 'means/ORCA%s-N06_200001%sd05U.nc' % (res, day), decode_cf=False)
-datasetV = xr.open_dataset(data_dir + 'means/ORCA%s-N06_200001%sd05V.nc' % (res, day), decode_cf=False)
+datasetM = xr.open_dataset(data_dir + 'domain/mesh_hgr.nc', decode_cf=False)
+datasetU = xr.open_dataset(data_dir + 'ORCA0083-N06_20090105d05U.nc' % (res, day), decode_cf=False)
+datasetV = xr.open_dataset(data_dir + 'ORCA0083-N06_20090105d05V.nc' % (res, day), decode_cf=False)
 
 dataArrayLonF = datasetM.glamf
 dataArrayLatF = datasetM.gphif
@@ -65,4 +62,4 @@ dataset[dataArrayLatF.name] = dataArrayLatF
 dataset[dataArrayTime.name] = dataArrayTime
 dataset[dataArrayUnBeachU.name] = dataArrayUnBeachU
 dataset[dataArrayUnBeachV.name] = dataArrayUnBeachV
-dataset.to_netcdf(path='ORCA%s-N06_unbeaching_vel.nc' % res, engine='scipy')
+dataset.to_netcdf(path='D:/Barents_Run_Data/ORCA0083-N006/ORCA0083-N06_unbeaching_vel.nc' % res, engine='scipy')
