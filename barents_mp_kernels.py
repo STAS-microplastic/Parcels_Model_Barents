@@ -4,7 +4,7 @@
 """
 Created on December 1 2018
 
-@author: Philippe Delandmeter
+@author: Philippe Delandmeter (Modified by Benjamin Heutte, December 2020)
 
 Kernels defining floating MP particle dynamics
 """
